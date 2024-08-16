@@ -158,7 +158,6 @@ class win_new_project(CTk.CTk):
     def open_win_gpo(self):
         parametrs_d = [] 
         parametrs_r = []
-
         mounth_w = self.mount.get()
         mounth_pr = self.start_pr.get()
         year_w = self.y_pr.get()
@@ -186,16 +185,24 @@ class win_new_project(CTk.CTk):
             if (len(parametrs_r) == 0) or (len(parametrs_d) == 0):
                 mb.showerror('Ошибка', 'Не выбраны статьи доходов и расходов')
             else:
-                id_pr = sql.input_project(nazv_comp=nazv_, nazv=nazv, mount_w=mounth_w, yr_w=year_w, mount_pr=mounth_pr, yr_pr=year_pr)
-                arr.append(id_pr)
-                for el in parametrs_r:
-                    sql.input_stati(id_pr=id_pr, nazv=el, param="Расходы")
-                for el in parametrs_d:
-                    sql.input_stati(id_pr=id_pr, nazv=el, param="Доходы")
-                
-                self.withdraw()
-                d = win_gpo()
-                d.mainloop()
+                arr_nazv = sql.take_nazv_projects(nazv_comp=nazv_)
+                prov = True
+                for el in arr_nazv:
+                    if nazv == el:
+                        prov = False
+                        mb.showerror('Ошибка', 'Логин уже занят')
+                        break
+                if prov:
+                    id_pr = sql.input_project(nazv_comp=nazv_, nazv=nazv, mount_w=mounth_w, yr_w=year_w, mount_pr=mounth_pr, yr_pr=year_pr)
+                    arr.append(id_pr)
+                    for el in parametrs_r:
+                        sql.input_stati(id_pr=id_pr, nazv=el, param="Расходы")
+                    for el in parametrs_d:
+                        sql.input_stati(id_pr=id_pr, nazv=el, param="Доходы")
+                    
+                    self.withdraw()
+                    d = win_gpo()
+                    d.mainloop()
         
     def _done(self):
         self.destroy()
