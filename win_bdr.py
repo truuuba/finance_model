@@ -6,6 +6,9 @@ from tkinter import messagebox as mb
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
+#массив с вводимыми данными
+trati = []
+
 class MyCheckBoxFrame(CTk.CTkScrollableFrame):
     def __init__(self, master):
         super().__init__(master, width=1100, height=500)
@@ -14,15 +17,16 @@ class MyCheckBoxFrame(CTk.CTkScrollableFrame):
         self.ttle2 = CTk.CTkLabel(master=self, text="Планируемый расход в месяц")
         self.ttle2.grid(row=0, column=1, padx=(5,5), pady=(5,5))
         counter = 1
-        for el in r:
-            self.nazv = CTk.CTkLabel(master=self, text=el)
+        id_proekt = arr[0]
+        params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
+        for el in params_r:
+            self.nazv = CTk.CTkLabel(master=self, text=el.nazv)
             self.nazv.grid(row=counter, column=0, padx=(5,5), pady=(5,5))
             self.st_r = CTk.CTkEntry(master=self)
             self.st_r.grid(row=counter, column=1, padx=(5,5), pady=(5,5))
             counter += 1
-            self.trati.append(self.st_r)
-        
-                
+            trati.append(self.st_r)
+                        
 class win_bdr(CTk.CTk):
     def __init__(self):
         super().__init__()
@@ -30,11 +34,6 @@ class win_bdr(CTk.CTk):
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
-
-        #массив с двнными по затратам
-        self.trati = []
-        #сюда вытащить массив для данных по продолжительности в месяцах ОБЯЗАТЕЛЬНО!!!
-        self.prodolj = []
 
         self.t = CTk.CTkLabel(master=self, text="Создание БДР")
         self.t.grid(row=0, column=0, padx=(5,5), pady=(5,5))
@@ -49,8 +48,10 @@ class win_bdr(CTk.CTk):
         sys.exit(0)
 
     def open_win_choice_table(self):
+        id_proekt = arr[0]
+        params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
         prov = True
-        for el in self.trati:
+        for el in trati:
             match_zav = re.match(r'^[0-9]+$', el.get())
             if not match_zav:
                 prov = False
@@ -58,6 +59,8 @@ class win_bdr(CTk.CTk):
                 break
         if prov:
             #Добавление данных в БДР
+            for i in range(len(params_r)):
+                sql.input_bdr(id_st=params_r[i].id_, st_r=trati[i].get())
             self.withdraw()
             f = win_choice_table()
             f.mainloop()
