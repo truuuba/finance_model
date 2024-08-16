@@ -1,5 +1,4 @@
 from win_bdr import *
-from connect_db import sql
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -81,14 +80,10 @@ class win_ppo(CTk.CTk):
                 break
         
         if prov:
-            #Нужно сюда добавление данных в базу
             id_pr = arr[0]
             dannie = sql.take_stat(id_pr=id_pr, param="Доходы")
             for i in range(len(dannie)):
-                dannie[i].id_
-
+                sql.input_ppo(dannie[i].id_, entry_ploshad[i].get(), entry_price[i].get(), entry_kv[i].get())
             self.withdraw()
             e = win_bdr()
             e.mainloop()
-
-arr = []
