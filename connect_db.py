@@ -21,6 +21,27 @@ class Sql:
         datas = make_arr_list(data)
         return datas
 
+    #для проверки названий проектов
+    def take_nazv_projects(self, nazv_comp):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT project.nazv FROM project INNER JOIN company ON project.Id_c = company.ID WHERE company.nazv = '" + nazv_comp + "';"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        cursor.close
+        del_probel(data, 0)
+        datas = make_arr_list(data)
+        return datas
+
+    def take_log_empl(self, id_comp):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT employe.log_ FROM employe WHERE employe.Id_c = " + str(id_comp) + ";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        cursor.close
+        del_probel(data, 0)
+        datas = make_arr_list(data)
+        return datas
+
     def found_ind_company(self, nazv):
         cursor = self.cnxn.cursor()
         zapros = "SELECT ID FROM company WHERE nazv = "+ "'"+ nazv + "'" +";"
@@ -131,7 +152,16 @@ class Sql:
     def input_ppo(self, id_st, pr_pl, stoim, kv_cnt):
         cursor = self.cnxn.cursor()
         id_ = self.found_id(name_='PPO')
-        zapros = 'INSERT INTO GPR (ID, Id_st, Prod_pl, Stoim, Kv_cnt) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(prod) + ", '" + zav + "');"
+        zapros = 'INSERT INTO PPO (ID, Id_st, Prod_pl, Stoim, Kv_cnt) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(pr_pl) + ", " + str(stoim) + ", " + kv_cnt + ");"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def input_bdr(self, id_st, st_r):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='BDR')
+        zapros = 'INSERT INTO BDR (ID, ID_st, stoim_r) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(st_r) + ");"
         print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
