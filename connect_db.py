@@ -1,0 +1,167 @@
+import pyodbc
+
+class stt:
+    def __init__(self, id_, nazv):
+        self.id_= id_
+        self.nazv = nazv
+
+class Sql:
+    def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
+        connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
+        #return pyodbc.connect(connectionString)
+        self.cnxn = pyodbc.connect(connectionString)
+
+    def take_nazv_comp(self):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT nazv FROM company;"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        cursor.close
+        del_probel(data, 0)
+        datas = make_arr_list(data)
+        return datas
+
+    def found_ind_company(self, nazv):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM company WHERE nazv = "+ "'"+ nazv + "'" +";"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        #берем и вытаскиваем переменную
+        n_normal = 0
+        for el in data:
+            for e in el:
+                n_normal = e
+        return n_normal
+    
+    def found_id(self, name_):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT MAX(ID) FROM ' + name_ + ';'
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        #берем и вытаскиваем переменную
+        id_emp = 0
+        for el in data:
+            for e in el:
+                id_emp = e
+        return id_emp + 1
+
+    def take_log_pass_adm(self, n):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT administ.log_, administ.pas_ FROM administ INNER JOIN company ON administ.Id_k = company.ID WHERE company.nazv = " + "'" + n + "'" + ';'
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 0)
+        del_probel(data, 1)
+        datas = make_arr_matrix(data)
+        cursor.close()
+        return datas
+    
+    def input_empl(self, id_c, fam, im, otch, log_, pas_):
+        cursor = self.cnxn.cursor()
+        id_empl = self.found_id(name_='employe')
+        zapros = 'INSERT INTO employe (ID, Id_c, fam, imya, otch, log_, pas_) VALUES ('+ str(id_empl) + ', '+ str(id_c) + ", '" + fam + "', " + "'" + im + "', " + "'" + otch + "', " + "'" + log_ +  "', " + "'" + pas_ + "');"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_log_pas_empl(self, nazv):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT employe.log_, employe.pas_ FROM employe INNER JOIN company ON employe.Id_c = company.ID WHERE company.nazv = " + "'" + nazv + "'" + ';'
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 0)
+        del_probel(data, 1)
+        datas = make_arr_matrix(data)
+        cursor.close()
+        return datas
+    
+    def take_project(self, nazv):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT project.nazv FROM project INNER JOIN company ON project.Id_c = company.ID WHERE company.nazv = " + "'" + nazv + "';"
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 0)
+        datas = make_arr_list(data)
+        return datas
+
+    def input_project(self, nazv_comp, nazv, mount_w, yr_w, mount_pr, yr_pr):
+        cursor = self.cnxn.cursor()
+        #Поиск айдишника компании по названию
+        id_c = self.found_ind_company(nazv_comp)
+        id_ = self.found_id(name_='project')
+        zapros = 'INSERT INTO project (ID, Id_c, nazv, mount_w, yr_w, mount_pr, yr_pr) VALUES (' + str(id_) + ', ' + str(id_c) + ", '" + nazv + "', " + "'" + mount_w + "', " + "'" + yr_w + "', " + "'" + mount_pr + "', " + "'" + yr_pr + "');"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+        return id_
+
+    def input_stati(self, id_pr, nazv, param):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='stati')
+        zapros = 'INSERT INTO stati (ID, id_p, d_r, nazv) VALUES (' + str(id_) + ", " + str(id_pr) + ", '" + param +"', " + "'" + nazv + "');"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_stat(self, id_pr, param):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT ID, nazv FROM stati WHERE Id_p = ' + str(id_pr) + " and d_r = '" + param + "';"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 1)
+        datas = []
+        for i in range(len(data)):
+            el = stt(data[i][0], data[i][1])
+            datas.append(el)
+        return datas
+
+    def input_gpr(self, id_st, prod, zav):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='GPR')
+        zapros = 'INSERT INTO GPR (ID, Id_st, Prodolj, Zavisim) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(prod) + ", '" + zav + "');"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def input_ppo(self, id_st, pr_pl, stoim, kv_cnt):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='PPO')
+        zapros = 'INSERT INTO GPR (ID, Id_st, Prod_pl, Stoim, Kv_cnt) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(prod) + ", '" + zav + "');"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+sql = Sql()
+
+def del_probel(arr, ind):
+    for el in arr:
+        n = len(el[ind]) - 1 
+        while n > 0:
+            per = el[ind]
+            if el[ind][-1] == " ":
+                el[ind] = per[:-1]
+                n -= 1
+            else:
+                break
+
+def make_arr_list(arr):
+    arr_normal = []
+    for el in arr:
+        for e in el:
+            arr_normal.append(e)
+    return arr_normal
+
+def make_arr_matrix(arr):
+    arr_normal = []
+    for i in range(len(arr)):
+        a = []
+        for j in range(len(arr[0])):
+            a.append(arr[i][j])
+        arr_normal.append(a)
+    return arr_normal
