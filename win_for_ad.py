@@ -80,8 +80,15 @@ class win_for_ad(CTk.CTk):
             mb.showerror("Ошибка!", "Некорректно введен пароль")
         else:
             id_comp = sql.found_ind_company(combobox[0].get())
-            sql.input_empl(id_comp, fam, im, otch, log, pas)
-            mb.showinfo('Успешно!', 'Вы добавили пользователя в систему!')
+            arr_logs = sql.take_log_empl(id_comp)
+            prov = True
+            for i in range(len(arr_logs)):
+                if arr_logs[i] == log:
+                    mb.showerror("Ошибка!", "Логин уже занят")
+                    prov = False
+            if prov:
+                sql.input_empl(id_comp, fam, im, otch, log, pas)
+                mb.showinfo('Успешно!', 'Вы добавили пользователя в систему!')
 
     def make_arr_nazv_pr(self):
         arr = sql.take_project(combobox[0].get())
