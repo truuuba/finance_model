@@ -167,6 +167,49 @@ class Sql:
         self.cnxn.commit()
         cursor.close()
 
+    def take_gpr_zavisim(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT Zavisim FROM GPR WHERE Id_st = '+ str(id_st) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        del_probel(data, 1)
+        return data[0]
+    
+    def take_gpr_prod(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT Prodolj FROM GPR WHERE Id_st = '+ str(id_st) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
+    
+    def take_mnth_st_w(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT mount_w FROM project WHERE ID = ' + str(id_p) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        del_probel(data, 1)
+        return data[0]
+    
+    def take_yr_st_w(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT yr_w FROM project WHERE ID = ' + str(id_p) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
+    
+    def take_nazv(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT nazv FROM project WHERE ID = ' + str(id_p) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        del_probel(data, 1)
+        return data[0]
+    
 sql = Sql()
 
 def del_probel(arr, ind):
