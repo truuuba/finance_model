@@ -1,6 +1,6 @@
 import customtkinter as CTk
 from win_tab_gpr import *
-import os
+from make_gpr_exe import *
 import sys
 
 class win_choice_table(CTk.CTk):
@@ -10,10 +10,11 @@ class win_choice_table(CTk.CTk):
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
+        id_pr = arr[0]
 
         self.gpr = CTk.CTkLabel(master=self, text="Таблица графика проивзодственных работ")
         self.gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel")
+        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=create_tabel_gpr(id_pr))
         self.gpr_ex.grid(row=1, column=0, padx=(5,5), pady=(5,5))
         self.gpr_win = CTk.CTkButton(master=self, text="Открыть таблицу ГПР в приложении", command=self.open_window_tab_gpr)
         self.gpr_win.grid(row=2, column=0, padx=(5,5), pady=(5,5))
@@ -61,4 +62,4 @@ class win_choice_table(CTk.CTk):
         os.system('main.py')
         sys.exit(0)
 
-r = []
+arr = []
