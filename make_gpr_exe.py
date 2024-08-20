@@ -23,6 +23,7 @@ def create_tabel_gpr(id_pr):
     year = sql.take_yr_st_w(id_pr)
 
     n_t = sql.take_nazv(id_pr)
+    n_t = del_probel_nazv(n_t)
     name_table = translit(n_t, language_code='ru', reversed=True) 
 
     name_rash = []
@@ -32,8 +33,10 @@ def create_tabel_gpr(id_pr):
         name_rash.append(dannie[i].nazv)
         el = sql.take_gpr_zavisim(dannie[i].id_)
         zavisim.append(el)
+        print(el)
         el2 = sql.take_gpr_prod(dannie[i].id_)
         prod.append(el2)
+        print(el2)
 
     #считаем данные по ГПР
     count_gpo(datas, name_rash, zavisim, prod)
@@ -106,6 +109,11 @@ def insertion_sort(unsorted, nazv, zav, prod, ind, ish):
         ish[hole] = val_ish
 
 def count_gpo(data_gpr, name_rash, zavisim, prod):
+    del_probeli_zavisim(zavisim)
+    print(name_rash)
+    print(zavisim)
+    print(prod)
+
     numbers = []
     #Подготовка всех переменнных
     dl = len(name_rash)
@@ -148,7 +156,6 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
         indexes = []
         for i in range(len(name_rash)):
             prov = True
-            print(zavisim[i]) #Ура зацикливание блять, а локально работало
             z = zavisim[i].split()
             max_dl = []
             num = []
@@ -345,3 +352,21 @@ def make_first_list(mnth, cnt, yr):
             ind += 1
         counter += 1     
     return lst
+
+#Очередная попытка удалить пробелы
+def del_probeli_zavisim(arr):
+    for i in range(len(arr)):   #for per in arr
+        n = len(arr[i])
+        for j in range(n-1, 0, -1):
+            if arr[i][j] == " ":
+                arr[i] = arr[i][:-1]
+            else:
+                break
+
+def del_probel_nazv(nm):
+    n = len(nm)
+    for j in range(n-1, 0, -1):
+        if nm[j] == " ":
+            nm = nm[:-1]
+        else:
+            return nm
