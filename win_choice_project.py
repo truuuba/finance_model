@@ -49,6 +49,9 @@ class win_choice_project(CTk.CTk):
 
     def open_win_choice_t(self):
         if not(self.old_pr.get() == 'Проекты отсутствуют'):
+            id_pr = sql.take_id_nazv_project(nazv_comp=combobox2[0].get(), nazv_pr=self.old_pr.get())
+            arr.append(id_pr)
+
             self.withdraw()
             h = win_choice_table()
             h.mainloop()
