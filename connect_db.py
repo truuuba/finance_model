@@ -173,8 +173,8 @@ class Sql:
         print(zapros)
         cursor.execute(zapros)
         data = make_arr_list(cursor.fetchall())
-        del_probel(data, 1)
-        return data[0]
+        n_data = data[0]
+        return n_data
     
     def take_gpr_prod(self, id_st):
         cursor = self.cnxn.cursor()
@@ -182,7 +182,7 @@ class Sql:
         print(zapros)
         cursor.execute(zapros)
         data = make_arr_list(cursor.fetchall())
-        return data[0]
+        return str(data[0])
     
     def take_mnth_st_w(self, id_p):
         cursor = self.cnxn.cursor()
@@ -209,6 +209,15 @@ class Sql:
         data = make_arr_list(cursor.fetchall())
         del_probel(data, 1)
         return data[0]
+    
+    def take_id_nazv_project(self, nazv_pr, nazv_comp):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT project.ID FROM project INNER JOIN company ON project.Id_c = company.ID WHERE company.nazv = '" + nazv_comp + "' AND project.nazv = '" + nazv_pr + "';"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
+        
     
 sql = Sql()
 
