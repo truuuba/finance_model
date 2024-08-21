@@ -218,6 +218,38 @@ class Sql:
         data = make_arr_list(cursor.fetchall())
         return data[0]
         
+    def input_prod_project(self, prod, id_pr):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE project SET prod = " + str(prod) + " WHERE ID = " + str(id_pr) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+    
+    def take_data_gpo(self, id_st, param):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT " + param + " FROM PPO WHERE Id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
+    
+    def take_mount_pr(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT mount_pr FROM project WHERE ID = ' + str(id_p) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        del_probel(data, 1)
+        return data[0]
+    
+    def take_dlit_project(self, id_p):
+        cursor = self.cnxn.cursor()
+        zapros = 'SELECT prod FROM project WHERE ID = ' + str(id_p) +';'
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
     
 sql = Sql()
 
