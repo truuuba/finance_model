@@ -1,6 +1,7 @@
 import customtkinter as CTk
 from win_tab_gpr import *
 from make_gpr_exe import *
+from make_ppo_exe import *
 import sys
 
 class win_choice_table(CTk.CTk):
@@ -12,7 +13,7 @@ class win_choice_table(CTk.CTk):
         self.protocol('WM_DELETE_WINDOW', self._done)
         id_pr = arr[0]
 
-        self.gpr = CTk.CTkLabel(master=self, text="Таблица графика проивзодственных работ")
+        self.gpr = CTk.CTkLabel(master=self, text="Таблица графика производственных работ")
         self.gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=create_tabel_gpr(id_pr))
         self.gpr_ex.grid(row=1, column=0, padx=(5,5), pady=(5,5))
@@ -21,7 +22,7 @@ class win_choice_table(CTk.CTk):
 
         self.ppo = CTk.CTkLabel(master=self, text="Таблица ППО")
         self.ppo.grid(row=3, column=0, padx=(5,5), pady=(5,5))
-        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel")
+        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=create_tabel_ppo(id_pr))
         self.ppo_ex.grid(row=4, column=0, padx=(5,5), pady=(5,5))
         self.ppo_win = CTk.CTkButton(master=self, text="Открыть таблицу ППО в приложении")
         self.ppo_win.grid(row=5, column=0, padx=(5,5), pady=(5,5))
