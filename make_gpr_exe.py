@@ -41,6 +41,9 @@ def create_tabel_gpr(id_pr):
     #считаем данные по ГПР
     count_gpo(datas, name_rash, zavisim, prod)
 
+    #Добавляем продолжительность в базу
+    sql.input_prod_project(id_pr=id_pr, prod=datas.dlit)
+
     filepath = create_empty_excel(columns=make_first_list(mounth, datas.dlit, year),
                                   filename=('gpr_' + name_table + '.xlsx'))
 
@@ -281,21 +284,22 @@ def count_gpo(data_gpr, name_rash, zavisim, prod):
                             for i in range(len(rasch_nazv)):
                                 if numb[i] == int(el):
                                     index = i
-                            nazv_obr.append(rasch_nazv[index])
-                            zav_obr.append(rasch_zav[index])
-                            prod_obr.append(int(rasch_prod[index]))
-                            numb_obr.append(numb[index])
-                            ish_isha_obr.append(ish_isha[index])
-                            dlina_obr.append(dlina[index])
+                            if len(rasch_nazv) != 0:
+                                nazv_obr.append(rasch_nazv[index])
+                                zav_obr.append(rasch_zav[index])
+                                prod_obr.append(int(rasch_prod[index]))
+                                numb_obr.append(numb[index])
+                                ish_isha_obr.append(ish_isha[index])
+                                dlina_obr.append(dlina[index])
 
-                            rasch_nazv.pop(index)
-                            rasch_zav.pop(index)
-                            rasch_prod.pop(index)
-                            numb.pop(index)
-                            ish_isha.pop(index)
-                            dlina.pop(index)
+                                rasch_nazv.pop(index)
+                                rasch_zav.pop(index)
+                                rasch_prod.pop(index)
+                                numb.pop(index)
+                                ish_isha.pop(index)
+                                dlina.pop(index)
 
-                            provereno[cnt] = True
+                                provereno[cnt] = True
                     else:
                         provereno[cnt] = True
             cnt += 1                    
