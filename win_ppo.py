@@ -1,4 +1,4 @@
-from win_bdr import *
+from win_choice_table import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -85,5 +85,5 @@ class win_ppo(CTk.CTk):
             for i in range(len(dannie)):
                 sql.input_ppo(dannie[i].id_, entry_ploshad[i].get(), entry_price[i].get(), entry_kv[i].get())
             self.withdraw()
-            e = win_bdr()
+            e = win_choice_table()
             e.mainloop()
