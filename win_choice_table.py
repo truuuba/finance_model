@@ -2,7 +2,7 @@ import customtkinter as CTk
 from win_tab_gpr import *
 from make_gpr_exe import *
 from make_ppo_exe import *
-import sys
+from win_bdr import *
 
 class win_choice_table(CTk.CTk):
     def __init__(self):
@@ -29,32 +29,29 @@ class win_choice_table(CTk.CTk):
 
         self.bdr = CTk.CTkLabel(master=self, text="Таблица БДР")
         self.bdr.grid(row=6, column=0, padx=(5,5), pady=(5,5))
-        self.bdr_ex = CTk.CTkButton(master=self, text="Создать таблицу БДР в Excel")
+        self.bdr_ex = CTk.CTkButton(master=self, text="Открыть таблицу БДР", command=self.open_win_bdr)
         self.bdr_ex.grid(row=7, column=0, padx=(5,5), pady=(5,5))
-        self.bdr_win = CTk.CTkButton(master=self, text="Открыть таблицу БДР в приложении")
-        self.bdr_win.grid(row=8, column=0, padx=(5,5), pady=(5,5))
 
         self.bdds = CTk.CTkLabel(master=self, text="Таблица БДДС")
-        self.bdds.grid(row=9, column=0, padx=(5,5), pady=(5,5))
+        self.bdds.grid(row=8, column=0, padx=(5,5), pady=(5,5))
         self.bdds_ex = CTk.CTkButton(master=self, text="Создать таблицу БДДС в Excel")
-        self.bdds_ex.grid(row=10, column=0, padx=(5,5), pady=(5,5))
+        self.bdds_ex.grid(row=9, column=0, padx=(5,5), pady=(5,5))
         self.bdds_win = CTk.CTkButton(master=self, text="Открыть таблицу БДДС в приложении")
-        self.bdds_win.grid(row=11, column=0, padx=(5,5), pady=(5,5))
+        self.bdds_win.grid(row=10, column=0, padx=(5,5), pady=(5,5))
         self.bdds_upd = CTk.CTkButton(master=self, text="Добавить данные в таблицу БДДС в приложении")
-        self.bdds_upd.grid(row=12, column=0, padx=(5,5), pady=(5,5))
+        self.bdds_upd.grid(row=11, column=0, padx=(5,5), pady=(5,5))
 
         self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в талицу")
-        self.changer.grid(row=13, column=0, padx=(5,5), pady=(15,5))
+        self.changer.grid(row=12, column=0, padx=(5,5), pady=(15,5))
         self.cnanger_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДР", "БДДС"])
-        self.cnanger_check_box.grid(row=14, column=0, padx=(5,5), pady=(5,5))
+        self.cnanger_check_box.grid(row=13, column=0, padx=(5,5), pady=(5,5))
         self.changer_but = CTk.CTkButton(master=self, text="Изменить")
-        self.changer_but.grid(row=15, column=0, padx=(5,5), pady=(5,5))
+        self.changer_but.grid(row=14, column=0, padx=(5,5), pady=(5,5))
 
         self.poyasn_t = CTk.CTkLabel(master=self, text="При создании нового файла не забывайте удалять старый!", text_color='#EB5E28')
-        self.poyasn_t.grid(row=16, column=0, padx=(5,5), pady=(5,5))
+        self.poyasn_t.grid(row=15, column=0, padx=(5,5), pady=(5,5))
 
     def open_window_tab_gpr(self):
-        self.withdraw()
         d = win_table_gpr()
         d.mainloop()
     
@@ -63,4 +60,6 @@ class win_choice_table(CTk.CTk):
         os.system('main.py')
         sys.exit(0)
 
-arr = []
+    def open_win_bdr(self):
+        d = win_bdr()
+        d.mainloop()   
