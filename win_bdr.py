@@ -1,32 +1,39 @@
 import customtkinter as CTk
-from win_choice_table import *
 import re
 from tkinter import messagebox as mb
+from connect_db import sql
+import sys
+import os
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
 
 #массив с вводимыми данными
 trati = []
+idishniki = []
 
 class MyCheckBoxFrame(CTk.CTkScrollableFrame):
     def __init__(self, master):
-        super().__init__(master, width=1100, height=500)
-        self.ttle1 = CTk.CTkLabel(master=self, text="Статья расходов")
-        self.ttle1.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.ttle2 = CTk.CTkLabel(master=self, text="Планируемый расход в месяц")
-        self.ttle2.grid(row=0, column=1, padx=(5,5), pady=(5,5))
-        counter = 1
+        super().__init__(master, width=1100, height=500, orientation="vertical")
         id_proekt = arr[0]
         params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
+        
+        counter = 0
+        #Добавляем данные по БД
         for el in params_r:
-            self.nazv = CTk.CTkLabel(master=self, text=el.nazv)
-            self.nazv.grid(row=counter, column=0, padx=(5,5), pady=(5,5))
-            self.st_r = CTk.CTkEntry(master=self)
-            self.st_r.grid(row=counter, column=1, padx=(5,5), pady=(5,5))
+            self.rash = CTk.CTkLabel(master=self, text=("Расходы на " + el.nazv))
+            self.rash.grid(row=counter, column=0, padx=(5,5), pady=(5,5))
             counter += 1
-            trati.append(self.st_r)
-                        
+            dannie = sql.take_data_bdr(el.id_)
+            for i in range(len(dannie)):
+                self.dat_rash = CTk.CTkLabel(master=self, text=(dannie[i].mnt + " " + str(dannie[i].yr) + " года"))
+                self.dat_rash.grid(row=counter, column=0, padx=(5,5), pady=(5,5))
+                self.st_rash = CTk.CTkEntry(master=self)
+                self.st_rash.grid(row=counter, column=1, padx=(5,5), pady=(5,5))
+                counter += 1
+                trati.append(self.st_rash)
+                idishniki.append(dannie[i].id_)
+
 class win_bdr(CTk.CTk):
     def __init__(self):
         super().__init__()
@@ -39,17 +46,18 @@ class win_bdr(CTk.CTk):
         self.t.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         self.scroll_frame = MyCheckBoxFrame(self)
         self.scroll_frame.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.new_win = CTk.CTkButton(master=self, text="Готово", command=self.open_win_choice_table)
+        self.new_win = CTk.CTkButton(master=self, text="Готово", command=self.create_bdr_table)
         self.new_win.grid(row=2, column=0, padx=(5,5), pady=(5,5))
+
+        self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены")
+        self.button_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
         self.destroy()
         os.system('main.py')
         sys.exit(0)
 
-    def open_win_choice_table(self):
-        id_proekt = arr[0]
-        params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
+    def create_bdr_table(self):
         prov = True
         for el in trati:
             match_zav = re.match(r'^[0-9]+$', el.get())
@@ -59,8 +67,8 @@ class win_bdr(CTk.CTk):
                 break
         if prov:
             #Добавление данных в БДР
-            for i in range(len(params_r)):
-                sql.input_bdr(id_st=params_r[i].id_, st_r=trati[i].get())
-            self.withdraw()
-            f = win_choice_table()
-            f.mainloop()
+            for i in range(len(trati)):
+                sql.update_bdr(id_=idishniki[i], trt=trati[i].get())
+            mb.showinfo("Отлично!", "Данные внесены")
+            
+arr = []
