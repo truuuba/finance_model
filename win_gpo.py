@@ -83,5 +83,3 @@ class win_gpo(CTk.CTk):
         self.destroy()
         os.system('main.py')
         sys.exit(0)
-
-#arr = []
