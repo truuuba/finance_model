@@ -5,6 +5,12 @@ class stt:
         self.id_= id_
         self.nazv = nazv
 
+class bdr:
+    def __init__(self, id_, mnt, yr):
+        self.id_= id_
+        self.mnt = mnt
+        self.yr = yr
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -158,15 +164,6 @@ class Sql:
         self.cnxn.commit()
         cursor.close()
 
-    def input_bdr(self, id_st, st_r):
-        cursor = self.cnxn.cursor()
-        id_ = self.found_id(name_='BDR')
-        zapros = 'INSERT INTO BDR (ID, ID_st, stoim_r) VALUES (' + str(id_) + ", " + str(id_st) + ", " + str(st_r) + ");"
-        print(zapros)
-        cursor.execute(zapros)
-        self.cnxn.commit()
-        cursor.close()
-
     def take_gpr_zavisim(self, id_st):
         cursor = self.cnxn.cursor()
         zapros = 'SELECT Zavisim FROM GPR WHERE Id_st = '+ str(id_st) +';'
@@ -251,6 +248,44 @@ class Sql:
         data = make_arr_list(cursor.fetchall())
         return data[0]
     
+    def input_BDR(self, id_st, mnt, yr):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='BDR_r')
+        zapros = "INSERT INTO BDR_r (ID, Id_st, mnt, yr) VALUES (" + str(id_) + ", " + str(id_st) + ", '" + mnt + "', " + str(yr) + ");"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_data_bdr(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, mnt, yr FROM BDR_r WHERE id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 1)
+        datas = []
+        for i in range(len(data)):
+            el = bdr(data[i][0], data[i][1], data[i][2])
+            datas.append(el)
+        return datas
+    
+    def update_bdr(self, id_, trt):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE BDR_r SET trati = " + str(trt) + " WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+    
+    def update_bdr2(self, id_, mnt, yr):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE BDR_r SET mnt = '" + mnt + "', yr = " + str(yr) + " WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+            
 sql = Sql()
 
 def del_probel(arr, ind):
