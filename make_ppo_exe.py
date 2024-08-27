@@ -31,17 +31,16 @@ def create_tabel_ppo(id_pr):
 
 #Создаем файлик для вноса данных 
 def create_empty_excel(columns: list, data: list, filename: str, sheet_name):
-    for i in range(len(data)):
-        df = pd.DataFrame(columns=columns, data=data[i])
+    if not os.path.exists('excel_files'):
+        os.makedirs('excel_files')
+    
+    filepath = os.path.join('excel_files', filename)
+    with pd.ExcelWriter(filepath, engine='xlsxwriter') as excel_writer:
+        for i in range(len(data)):
+            df = pd.DataFrame(columns=columns, data=data[i])
+            df.to_excel(excel_writer, index=False, sheet_name=sheet_name[i], freeze_panes=(1, 0))
 
-        if not os.path.exists('excel_files'):
-            os.makedirs('excel_files')
-
-        filepath = os.path.join('excel_files', filename)
-        excel_writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
-        df.to_excel(excel_writer, index=False, sheet_name=sheet_name[i], freeze_panes=(1, 0))
-
-    excel_writer._save()
+    #excel_writer._save()
     return filepath
 
 #Считаем ППО
