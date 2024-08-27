@@ -41,11 +41,61 @@ def create_tabel_gpr(id_pr):
     #считаем данные по ГПР
     count_gpo(datas, name_rash, zavisim, prod)
 
+    '''
+    Здесь очень надо прописать условие на наличие данных  в БДР через функцию:
+    take_data_bdr()
+
+    В случае если есть, то надо прописать вонючий UPDATE на конкретные записи проекта, остальные через инсерт
+
+    '''
+
+    #Добавляем данные в БДР
+    for i in range(0, len(datas.gpo)):
+        mnt = mounth #Месяц начала работ
+        yr = year #Год начала работ
+        per = datas.gpo[i][0]
+        ind_st = 0
+        #поиск айдишника
+        for el in dannie:
+            if el.nazv == per:
+                ind_st = el.id_
+        arr = sql.take_data_bdr(ind_st)
+        if len(arr) == 0:                                                            #ПРОВЕРКА БЛЯТЬ НА ВОНЮЧИЕ ЗАПИСИ В НАЛИЧИИ
+            for j in range(1, datas.dlit + 1):
+                #Проверка на наличие работ в этом месяце
+                if datas.gpo[i][j] == 1:
+                    sql.input_BDR(id_st=ind_st, mnt=mnt, yr=year)
+                mnt = change_mounth(mnt)
+                if mnt == 'Январь':
+                    yr += 1   
+        else:
+            for el in arr:
+                for j in range(1, datas.dlit + 1):
+                    #Проверка на наличие работ в этом месяце
+                    if datas.gpo[i][j] == 1:
+                        sql.update_bdr2(id_=el.id_, mnt=mnt, yr=year)     
+                    mnt = change_mounth(mnt)
+                    if mnt == 'Январь':
+                        yr += 1            
+
     #Добавляем продолжительность в базу
     sql.input_prod_project(id_pr=id_pr, prod=datas.dlit)
 
     filepath = create_empty_excel(columns=make_first_list(mounth, datas.dlit, year),
                                   filename=('gpr_' + name_table + '.xlsx'))
+
+#Переставляем месяца
+def change_mounth(mounth):
+    arr = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+    ind = 0
+    for i in range(len(arr)):
+        if arr[i] == mounth:
+            ind = i
+            break
+    if ind == 11:
+        return arr[0]
+    else:
+        return arr[ind+1]
 
 # Функция для подсветки ячеек
 def highlight_cells(val):
