@@ -167,7 +167,7 @@ class win_new_project(CTk.CTk):
 
         match_year_w = re.match(r'^\d+$', year_w)
         match_year_pr = re.match(r'^\d+$', year_pr)
-        match_nazv = re.match(r'^[А-Яа-яЁё0-9\s]+$', nazv)
+        match_nazv = re.match(r'^[А-Яа-яЁё0-9]+$', nazv)
 
         if not(match_year_w):
             mb.showerror('Ошибка', 'Неправильно введен год начала работ')
@@ -190,7 +190,7 @@ class win_new_project(CTk.CTk):
                 for el in arr_nazv:
                     if nazv == el:
                         prov = False
-                        mb.showerror('Ошибка', 'Логин уже занят')
+                        mb.showerror('Ошибка', 'Название уже занято')
                         break
                 if prov:
                     id_pr = sql.input_project(nazv_comp=nazv_, nazv=nazv, mount_w=mounth_w, yr_w=year_w, mount_pr=mounth_pr, yr_pr=year_pr)
