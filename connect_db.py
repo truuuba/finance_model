@@ -11,10 +11,17 @@ class bdr:
         self.mnt = mnt
         self.yr = yr
 
+class bdr_d:
+    def __init__(self, id_, mnt, yr, doh):
+        self.id_= id_
+        self.mnt = mnt
+        self.yr = yr
+        self.doh = doh
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
-        #return pyodbc.connect(connectionString)
+        #return pyodbcзшз.connect(connectionString)
         self.cnxn = pyodbc.connect(connectionString)
 
     def take_nazv_comp(self):
@@ -281,6 +288,36 @@ class Sql:
     def update_bdr2(self, id_, mnt, yr):
         cursor = self.cnxn.cursor()
         zapros = "UPDATE BDR_r SET mnt = '" + mnt + "', yr = " + str(yr) + " WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def input_bdr_d(self, id_st, mnt, yr, doh):
+        cursor = self.cnxn.cursor()
+        id_ = self.found_id(name_='BDR_d')
+        zapros = "INSERT INTO BDR_d (ID, Id_st, mnt, yr, dohodi) VALUES (" + str(id_) + ", " + str(id_st) + ", '" + mnt + "', " + str(yr) + ", " + str(doh) + ");"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
+    def take_bdr_d(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, mnt, yr FROM BDR_d WHERE id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 1)
+        datas = []
+        for i in range(len(data)):
+            el = bdr_d(data[i][0], data[i][1], data[i][2], data[i][3])
+            datas.append(el)
+        return datas
+    
+    def update_bdr_d(self, id_, mnt, yr, doh):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE BDR_d SET mnt = '" + mnt + "', yr = " + str(yr) + ", dohodi = " + str(doh) + " WHERE ID = " + str(id_) + ";"
         print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
