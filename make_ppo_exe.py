@@ -14,6 +14,7 @@ def create_tabel_ppo(id_pr):
     dannie = sql.take_stat(id_pr=id_pr, param="Доходы")
     t_ppo = []
     m = sql.take_mount_pr(id_pr)
+    year = sql.take_yr_st_w(id_pr)
     prod = sql.take_dlit_project(id_pr)
     sht_name = []
 
@@ -27,7 +28,43 @@ def create_tabel_ppo(id_pr):
         #Считаем ППО по каждой статье расходов
         t_ppo.append(cout_ppo(ploshad_kv_m, st_kv_m, prod, m, cnt_kvartir))
 
+    #Проверка на наличие записей в БДР
+    p = False
+    data = []
+    for i in range(len(dannie)):
+        data = sql.take_bdr_d(dannie[i].id_)
+        if len(data) != 0:
+            p = True
+
+    #Начинаем добавление данных в БДР
+    for elem in t_ppo:
+        n = len(elem) - 1
+        for el in dannie:
+            mes = m
+            yr = year
+            for i in range(1, len(elem[n])):
+                if not p:
+                    sql.input_bdr_d(id_st=el.id_, mnt=mes, yr=yr, doh=(elem[n][i]))
+                else:
+                    sql.update_bdr_d(id_= data[i].id_, mnt=mes, yr=yr, doh=(elem[n][i]))
+                mes = change_mounth(mes)
+                if mes == 'Январь':
+                    yr += 1
+
     filepath = create_empty_excel(columns=make_first_list(m, prod), filename=('ppo_' + name_table + '.xlsx'), data=t_ppo, sheet_name = sht_name)
+
+#Меняем месяца
+def change_mounth(mounth):
+    arr = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+    ind = 0
+    for i in range(len(arr)):
+        if arr[i] == mounth:
+            ind = i
+            break
+    if ind == 11:
+        return arr[0]
+    else:
+        return arr[ind+1]
 
 #Создаем файлик для вноса данных 
 def create_empty_excel(columns: list, data: list, filename: str, sheet_name):
