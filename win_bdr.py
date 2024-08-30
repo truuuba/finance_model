@@ -1,9 +1,7 @@
 import customtkinter as CTk
 import re
 from tkinter import messagebox as mb
-from connect_db import sql
-import sys
-import os
+from make_bdr_exe import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -46,16 +44,30 @@ class win_bdr(CTk.CTk):
         self.t.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         self.scroll_frame = MyCheckBoxFrame(self)
         self.scroll_frame.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.new_win = CTk.CTkButton(master=self, text="Готово", command=self.create_bdr_table)
+        self.new_win = CTk.CTkButton(master=self, text="Обновить данные", command=self.create_bdr_table)
         self.new_win.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
-        self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены")
-        self.button_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+        #Решаем вопрос с наличием данных в БДР
+        id_proekt = arr[0]
+        params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
+        trt = []
+        for i in range(len(params_r)):
+            arr2 = sql.take_bdr_r_id(params_r[i].id_)
+            for el in arr2:
+                trt.append(sql.take_data_bdr_r(el))
+
+        #Проверяем наличие данные в БДР
+        prov = True
+        for el in trt:
+            if el is None:
+                prov = False
+        
+        if prov:
+            self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены")
+            self.button_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
         self.destroy()
-        os.system('main.py')
-        sys.exit(0)
 
     def create_bdr_table(self):
         prov = True
