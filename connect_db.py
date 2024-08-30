@@ -304,7 +304,7 @@ class Sql:
 
     def take_bdr_d(self, id_st):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, mnt, yr FROM BDR_d WHERE id_st = " + str(id_st) + ";"
+        zapros = "SELECT ID, mnt, yr, dohodi FROM BDR_d WHERE id_st = " + str(id_st) + ";"
         print(zapros)
         cursor.execute(zapros)
         data = cursor.fetchall()
@@ -322,6 +322,21 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
+    
+    def take_bdr_r_id(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID FROM BDR_r WHERE Id_st = " + str(id_st) + ";"
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data
+
+    def take_data_bdr_r(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT trati FROM BDR_r WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
             
 sql = Sql()
 
