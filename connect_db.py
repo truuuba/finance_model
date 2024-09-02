@@ -18,10 +18,26 @@ class bdr_d:
         self.yr = yr
         self.doh = doh
 
+class bdr_r:
+    def __init__(self, id_, id_st, mnt, yr, trt):
+        self.id_= id_
+        self.id_st = id_st
+        self.mnt = mnt
+        self.yr = yr
+        self.trt = trt
+
+class bdr_dh:
+    def __init__(self, id_, id_st, mnt, yr, doh):
+        self.id_= id_
+        self.id_st = id_st
+        self.mnt = mnt
+        self.yr = yr
+        self.doh = doh
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
-        #return pyodbcзшз.connect(connectionString)
+        #return pyodbc.connect(connectionString)
         self.cnxn = pyodbc.connect(connectionString)
 
     def take_nazv_comp(self):
@@ -337,6 +353,40 @@ class Sql:
         cursor.execute(zapros)
         data = make_arr_list(cursor.fetchall())
         return data[0]
+    
+    def take_year_prod(self, id_):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT yr_pr FROM project WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data[0]
+    
+    def take_data_bdr_rashodi(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st, mnt, yr, trati FROM BDR_r WHERE Id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 1)
+        datas = []
+        for i in range(len(data)):
+            el = bdr_r(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        return datas
+    
+    def take_data_bdr_dohodi(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Id_st, mnt, yr, dohodi FROM BDR_d WHERE Id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        del_probel(data, 1)
+        datas = []
+        for i in range(len(data)):
+            el = bdr_dh(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        return datas
             
 sql = Sql()
 
