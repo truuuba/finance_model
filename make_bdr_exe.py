@@ -37,12 +37,19 @@ def create_tabel_bdr(id_pr):
     bdr_d = []
     bdr_r = []
     for el in dannie_d:
-        bdr_d.append(sql.take_data_bdr_dohodi(el.id_))
+        tmp = sql.take_data_bdr_dohodi(el.id_)
+        for i in range(len(tmp)):
+            bdr_d.append(tmp[i])
     for el in dannie_r:
-        bdr_r.append(sql.take_data_bdr_rashodi(el.id_))
+        tmp = sql.take_data_bdr_rashodi(el.id_)
+        for i in range(len(tmp)):
+            bdr_r.append(tmp[i])
 
     #Считаем БДР
-    dt = count_bdr_rashodi(columns, dannie_d, dannie_r, bdr_d, bdr_r)
+    dt = count_bdr(columns, dannie_d, dannie_r, bdr_d, bdr_r)
+
+    for i in range(len(dt)):
+        print(dt[i])
 
     filepath = create_empty_excel(filename=('bdr_' + name_table + '.xlsx'), columns=columns, dt=dt)
 
@@ -75,42 +82,46 @@ def make_first_list(mnt_w, mnt_prod, yr_w, yr_prod, dlit):
             prov_w = True
     
     #Условие для продаж перед строительством
-    if prov_prod:
+    if prov_w:
         prov = mnt_w + " " + str(yr_w)
         tmp = mnt_prod + " " + str(yr_prod)
         mnt = mnt_prod
         yr = yr_prod
         while (prov != tmp):
+            print(prov)
+            print(tmp)
             arr_time.append(tmp)
             mnt = change_mnt(mnt)
             if mnt == 'Январь':
                 yr += 1
-            tmp = mnt + " " + yr
+            tmp = mnt + " " + str(yr)
         for i in range(dlit):
             arr_time.append(mnt + " " + yr)
             mnt = change_mnt(mnt)
             if mnt == 'Январь':
                 yr += 1
-            tmp = mnt + " " + yr
+            tmp = mnt + " " + str(yr)
     
     #Условие для строительства перед продажами
-    if prov_w:
+    if prov_prod:
         prov = mnt_prod + " " + str(yr_prod)
         tmp = mnt_w + " " + str(yr_w)
         mnt = mnt_w
         yr = yr_w
         while (prov != tmp):
+            print(prov)
+            print(tmp)
             arr_time.append(tmp)
             mnt = change_mnt(mnt)
             if mnt == 'Январь':
                 yr += 1
-            tmp = mnt + " " + yr
+            tmp = mnt + " " + str(yr)
         for i in range(dlit):
-            arr_time.append(mnt + " " + yr)
+            arr_time.append(mnt + " " + str(yr))
             mnt = change_mnt(mnt)
             if mnt == 'Январь':
                 yr += 1
-            tmp = mnt + " " + yr
+            tmp = mnt + " " + str(yr)
     
     return arr_time
 
@@ -134,7 +145,7 @@ def found_ind_mnt(mnt):
             return i
 
 #считаем БДР
-def count_bdr_rashodi(columns, d_d, d_r, bdr_d, bdr_r):
+def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
     table_gpr = []
 
     #идем по каждой статье доходов
@@ -150,12 +161,13 @@ def count_bdr_rashodi(columns, d_d, d_r, bdr_d, bdr_r):
 
         #проверяем наличие доходов в этом месяце
         for i in range(len(columns)):
+            prov = False
+            tr = 0
             for j in range(len(mas_el)):
-                tp = mas_el[i].mnt + " " + mas_el[j].yr
+                tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
-                    temp.append(mas_el.dohodi)
-                else:
-                    temp.append(0)
+                    tr = float(mas_el[j].doh)
+            temp.append(tr)
         
         table_gpr.append(temp)
     
@@ -173,9 +185,9 @@ def count_bdr_rashodi(columns, d_d, d_r, bdr_d, bdr_r):
         #проверяем наличие расходов в этом месяце
         for i in range(len(columns)):
             for j in range(len(mas_el)):
-                tp = mas_el[i].mnt + " " + mas_el[j].yr
+                tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
-                    temp.append(mas_el.trati)
+                    temp.append(float(mas_el[j].trt))
                 else:
                     temp.append(0)
         
