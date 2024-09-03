@@ -368,7 +368,7 @@ class Sql:
         print(zapros)
         cursor.execute(zapros)
         data = cursor.fetchall()
-        del_probel(data, 1)
+        del_probel(data, 2)
         datas = []
         for i in range(len(data)):
             el = bdr_r(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
@@ -381,7 +381,7 @@ class Sql:
         print(zapros)
         cursor.execute(zapros)
         data = cursor.fetchall()
-        del_probel(data, 1)
+        del_probel(data, 2)
         datas = []
         for i in range(len(data)):
             el = bdr_dh(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
