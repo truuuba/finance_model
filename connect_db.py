@@ -282,7 +282,7 @@ class Sql:
 
     def take_data_bdr(self, id_st):
         cursor = self.cnxn.cursor()
-        zapros = "SELECT ID, mnt, yr FROM BDR_r WHERE id_st = " + str(id_st) + ";"
+        zapros = "SELECT ID, mnt, yr FROM BDR_r WHERE Id_st = " + str(id_st) + ";"
         print(zapros)
         cursor.execute(zapros)
         data = cursor.fetchall()
