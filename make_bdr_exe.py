@@ -161,7 +161,6 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
 
         #проверяем наличие доходов в этом месяце
         for i in range(len(columns)):
-            prov = False
             tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
@@ -184,13 +183,13 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
 
         #проверяем наличие расходов в этом месяце
         for i in range(len(columns)):
+            tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
-                    temp.append(float(mas_el[j].trt))
-                else:
-                    temp.append(0)
+                    tr = float(mas_el[j].trt)
+            temp.append(tr)    
         
-        table_gpr.append(temp)
+        table_gpr.append(tr)
     
     return table_gpr
