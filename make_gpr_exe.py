@@ -19,7 +19,7 @@ def create_tabel_gpr(id_pr):
     #Сначала по таблице Статы через айди проекта вытащить статьи расходов - в name_rash записываем названия и в другой массив фиксируем айдишники
     #Далее по таблице ГПР проходимся через айдишники статей и вытаскиваем зависимости и продолжительность
     dannie = sql.take_stat(id_pr=id_pr, param="Расходы")
-    mounth = sql.take_mnth_st_w(id_pr)
+    mounth = del_probel_nazv(sql.take_mnth_st_w(id_pr))
     year = sql.take_yr_st_w(id_pr)
 
     n_t = sql.take_nazv(id_pr)
@@ -56,16 +56,20 @@ def create_tabel_gpr(id_pr):
             for j in range(1, datas.dlit + 1):
                 #Проверка на наличие работ в этом месяце
                 if datas.gpo[i][j] == 1:
-                    sql.input_BDR(id_st=ind_st, mnt=mnt, yr=year)
+                    sql.input_BDR(id_st=ind_st, mnt=mnt, yr=yr)
                 mnt = change_mounth(mnt)
                 if mnt == 'Январь':
                     yr += 1   
         else:
-            for el in arr:
+            n = len(arr)
+            cnt = 0
+            while (cnt < n):
+                yr = year #Год начала работ
                 for j in range(1, datas.dlit + 1):
                     #Проверка на наличие работ в этом месяце
                     if datas.gpo[i][j] == 1:
-                        sql.update_bdr2(id_=el.id_, mnt=mnt, yr=year)     
+                        sql.update_bdr2(id_= arr[cnt].id_, mnt=mnt, yr=yr)     
+                        cnt += 1
                     mnt = change_mounth(mnt)
                     if mnt == 'Январь':
                         yr += 1            
@@ -76,7 +80,7 @@ def create_tabel_gpr(id_pr):
     filepath = create_empty_excel(columns=make_first_list(mounth, datas.dlit, year),
                                   filename=('gpr_' + name_table + '.xlsx'))
 
-#Переставляем месяца
+#Меняем месяца
 def change_mounth(mounth):
     arr = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
     ind = 0
