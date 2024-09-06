@@ -13,7 +13,7 @@ def create_tabel_ppo(id_pr):
     #Вытаскиваем статьи доходов по айди проекта
     dannie = sql.take_stat(id_pr=id_pr, param="Доходы")
     t_ppo = []
-    m = sql.take_mount_pr(id_pr)
+    m = del_probel_nazv(sql.take_mount_pr(id_pr))
     year = sql.take_yr_st_w(id_pr)
     prod = sql.take_dlit_project(id_pr)
     sht_name = []
@@ -220,8 +220,7 @@ def make_koef():
 
 #Шапка таблицы
 def make_first_list(m, pr):
-    shapka = []
-    shapka.append('')
+    shapka = ['']
     arr = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
     ind_m = 0
     for i in range(1, len(arr)):
@@ -244,4 +243,3 @@ def del_probel_nazv(nm):
             nm = nm[:-1]
         else:
             return nm
-
