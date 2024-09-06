@@ -44,6 +44,7 @@ def create_tabel_bdr(id_pr):
         tmp = sql.take_data_bdr_rashodi(el.id_)
         for i in range(len(tmp)):
             bdr_r.append(tmp[i])
+            print(tmp[i].id_st, tmp[i].mnt, tmp[i].yr, tmp[i].trt)
 
     #Считаем БДР
     dt = count_bdr(columns, dannie_d, dannie_r, bdr_d, bdr_r)
@@ -190,6 +191,6 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
                     tr = float(mas_el[j].trt)
             temp.append(tr)    
         
-        table_gpr.append(tr)
+        table_gpr.append(temp)
     
     return table_gpr
