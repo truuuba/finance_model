@@ -161,7 +161,7 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
                 mas_el.append(elem)
 
         #проверяем наличие доходов в этом месяце
-        for i in range(len(columns)):
+        for i in range(1, len(columns)):
             tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
@@ -183,7 +183,7 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
                 mas_el.append(elem)
 
         #проверяем наличие расходов в этом месяце
-        for i in range(len(columns)):
+        for i in range(1, len(columns)):
             tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
