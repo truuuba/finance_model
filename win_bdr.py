@@ -63,7 +63,7 @@ class win_bdr(CTk.CTk):
                 prov = False
         
         if prov:
-            self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены")
+            self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены - сразу создать таблицу", command=self.make_bdr)
             self.button_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
     def _done(self):
@@ -82,5 +82,10 @@ class win_bdr(CTk.CTk):
             for i in range(len(trati)):
                 sql.update_bdr(id_=idishniki[i], trt=trati[i].get())
             mb.showinfo("Отлично!", "Данные внесены")
+
+    def make_bdr(self):
+        create_tabel_bdr(arr[0])
+        mb.showinfo("Отлично!", "Таблица была создана")
             
 arr = []
+
