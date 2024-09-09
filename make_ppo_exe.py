@@ -26,29 +26,7 @@ def create_tabel_ppo(id_pr):
         sht_name.append(dannie[i].nazv)
 
         #Считаем ППО по каждой статье расходов
-        t_ppo.append(cout_ppo(ploshad_kv_m, st_kv_m, prod, m, cnt_kvartir))
-
-    #Проверка на наличие записей в БДР
-    p = False
-    data = []
-    for i in range(len(dannie)):
-        data = sql.take_bdr_d(dannie[i].id_)
-        if len(data) != 0:
-            p = True
-
-    #Начинаем добавление данных в БДР
-    for i in range(len(t_ppo)):
-        n = len(t_ppo[i]) - 1
-        mes = m #использовать dannie[i]
-        yr = year
-        for j in range(1, len(t_ppo[i][n])):
-            if not p:
-                sql.input_bdr_d(id_st=dannie[i].id_, mnt=mes, yr=yr, doh=(t_ppo[i][n][j]))
-            else:
-                sql.update_bdr_d(id_= data[i].id_, mnt=mes, yr=yr, doh=(t_ppo[i][n][j]))
-            mes = change_mounth(mes)
-            if mes == 'Январь':
-                yr += 1
+        t_ppo.append(cout_ppo(ploshad_kv_m, st_kv_m, prod, m, cnt_kvartir, dannie, year, i))
 
     filepath = create_empty_excel(columns=make_first_list(m, prod), filename=('ppo_' + name_table + '.xlsx'), data=t_ppo, sheet_name = sht_name)
 
@@ -80,7 +58,7 @@ def create_empty_excel(columns: list, data: list, filename: str, sheet_name):
     return filepath
 
 #Считаем ППО
-def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv):
+def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv, dannie, year, index_i):
     # Проценты
     pr_ipot = 0.45
     pr_rassr = 0.39
@@ -143,7 +121,7 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv):
         dolg.append(round(ddu[i]-money[i]))
         ddu_rassr.append(round(dolg[i]/(sr_st_kv * pr_rassr_vznos), 2))
 
-    #Создаем таблицу для вычилений
+    #Создаем таблицу для вычислений
     table_ppo = [0] * prod
     for i in range(prod):
         table_ppo[i] = [0] * prod
@@ -192,6 +170,24 @@ def cout_ppo(ploshad, st_m, prod, mounth_start, cnt_kv):
             ind_m = 0
         else:
             ind_m += 1
+
+    #Проверка на наличие записей в БДР
+    p = False
+    data = sql.take_bdr_d(dannie[index_i].id_)
+    if len(data) != 0:
+        p = True
+
+    #Начинаем добавление данных в БДР
+    mes = mounth_start 
+    yr = year
+    for j in range(1, prod + 1):
+        if not p:
+            sql.input_bdr_d(id_st=dannie[index_i].id_, mnt=mes, yr=yr, doh=(ppo[prod+1][j]))
+        else:
+            sql.update_bdr_d(id_=data[j-1].id_, mnt=mes, yr=yr, doh=(ppo[prod+1][j]))
+        mes = change_mounth(mes)
+        if mes == 'Январь':
+            yr += 1
 
     # Вывод ППО для теста
     for i in range(len(ppo)):
