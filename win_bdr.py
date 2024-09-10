@@ -38,7 +38,6 @@ class win_bdr(CTk.CTk):
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
-        self.protocol('WM_DELETE_WINDOW', self._done)
 
         self.t = CTk.CTkLabel(master=self, text="Создание БДР")
         self.t.grid(row=0, column=0, padx=(5,5), pady=(5,5))
@@ -66,9 +65,6 @@ class win_bdr(CTk.CTk):
             self.button_ready = CTk.CTkButton(master=self, text="Данные уже внесены - сразу создать таблицу", command=self.make_bdr)
             self.button_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
-    def _done(self):
-        self.destroy()
-
     def create_bdr_table(self):
         prov = True
         for el in trati:
@@ -88,4 +84,5 @@ class win_bdr(CTk.CTk):
         mb.showinfo("Отлично!", "Таблица была создана")
             
 arr = []
+
 
