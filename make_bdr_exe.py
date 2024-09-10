@@ -170,8 +170,21 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
             temp.append(tr)
         
         table_gpr.append(temp)
+
+    # Считаем сумму доходов
+    n = len(columns)
+    s_d = [0] * n
+    s_d[0] = "Все доходы по месяцам"
+
+    # Проходимся по таблице
+    for i in range(len(d_d)):
+        for j in range(1, len(columns)):
+            s_d[j] += table_gpr[i][j]
+    
+    table_gpr.append(s_d)
     
     #идем по каждой статье расходов
+    rashod = [] #таблица под расходы
     for el in d_r:
         temp = [] #массив под бдр
         temp.append(el.nazv)
@@ -189,8 +202,23 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
                     tr = float(mas_el[j].trt)
-            temp.append(tr)    
-        
+            temp.append(tr)  
+        rashod.append(temp)        
         table_gpr.append(temp)
     
+    s_r = [0] * n
+    pribil = [0] * n
+    s_r[0] = "Все расходы по месяцам"
+    pribil[0] = "Прибыль"
+    # Проходимся по таблице
+    for i in range(len(d_r)):
+        for j in range(1, len(columns)):
+            s_r[j] += rashod[i][j]
+    # Считаем прибыль
+    for i in range(1, len(columns)):
+        pribil[i] = s_d[i] - s_r[i]
+    
+    table_gpr.append(s_r)
+    table_gpr.append(pribil)
+
     return table_gpr
