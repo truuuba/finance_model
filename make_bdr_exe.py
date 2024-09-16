@@ -14,6 +14,45 @@ def create_empty_excel(filename: str, columns, dt):
     excel_writer = pd.ExcelWriter(filepath, engine='xlsxwriter')
     
     df.to_excel(excel_writer, index=False, sheet_name='БДР', freeze_panes=(1, 0))
+    
+    # Получаем workbook и worksheet для добавления форматирования
+    workbook = excel_writer.book
+    worksheet = excel_writer.sheets['БДР']
+
+    # Создаем несколько форматов для цветовой заливки строк
+    format1 = workbook.add_format({'bg_color': '#E6DCCA'})                # Для параметра доходов
+    format2 = workbook.add_format({'bg_color': '#B7B7A4', 'bold': True})  # Для общих параметров доходов
+    format3 = workbook.add_format({'bg_color': '#FFE8D6'})                # Для параметра расходов
+    format4 = workbook.add_format({'bg_color': '#D4AC94', 'bold': True})  # Для общих параметров расходов
+    format5 = workbook.add_format({'bg_color': '#CB997E', 'bold': True})  # Для прибыли
+
+    # Применяем условное форматирование для всего диапазона данных, начиная с первой строки и второго столбца
+    for row in range(1, len(df) + 1):
+        first_col_value = df.iloc[row-1, 0]
+
+        # Применяем разные форматы в зависимости от значения первого столбца
+        if "Доходы" in first_col_value:
+            cell_format = format1
+        elif "доходы" in first_col_value:
+            cell_format = format2
+        elif "Все расходы" in first_col_value:
+            cell_format = format4
+        elif "Прибыль" in first_col_value:
+            cell_format = format5
+        else:
+            cell_format = format3
+
+        # Применяем формат только к ячейкам, содержащим данные
+        for col in range(len(columns)):
+            worksheet.write(row, col, df.iloc[row-1, col], cell_format)
+    
+    # Применяем сетку по всей таблице (по умолчанию)
+    border_format = workbook.add_format({'border': 1})  # Формат с границей вокруг ячеек
+
+    # Определяем диапазон ячеек для применения сетки
+    worksheet.conditional_format(0, 0, len(df), len(columns) - 1, {'type': 'no_blanks', 'format': border_format})
+    worksheet.conditional_format(0, 0, len(df), len(columns) - 1, {'type': 'blanks', 'format': border_format})
+    
     excel_writer._save()
 
     return filepath
@@ -63,7 +102,7 @@ def del_probel_nazv(nm):
             return nm
         
 def make_first_list(mnt_w, mnt_prod, yr_w, yr_prod, dlit):
-    arr_time = [""]
+    arr_time = ["", "Общая сумма"]
 
     #Проверка на то, что раньше
     prov_w = False
@@ -153,6 +192,7 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
     for el in d_d:
         temp = [] #массив под бдр
         temp.append(el.nazv)
+        temp.append(0)
         mas_el = [] #массив под статью дохода
 
         #вытаскиваем все записи по этой статье
@@ -160,15 +200,18 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
             if elem.id_st == el.id_:
                 mas_el.append(elem)
 
+        summ = 0
         #проверяем наличие доходов в этом месяце
-        for i in range(1, len(columns)):
+        for i in range(2, len(columns)):
             tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
                     tr = float(mas_el[j].doh)
+                    summ += tr
             temp.append(tr)
         
+        temp[1] = summ
         table_gpr.append(temp)
 
     # Считаем сумму доходов
@@ -178,16 +221,23 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
 
     # Проходимся по таблице
     for i in range(len(d_d)):
-        for j in range(1, len(columns)):
+        for j in range(2, len(columns)):
             s_d[j] += table_gpr[i][j]
-    
+
+    #Считаем общий доход по всем статьям
+    summ = 0
+    for i in range(2, len(s_d)):
+        summ += s_d[i]
+    s_d[1] = summ
     table_gpr.append(s_d)
     
     #идем по каждой статье расходов
+    summ = 0
     rashod = [] #таблица под расходы
     for el in d_r:
         temp = [] #массив под бдр
         temp.append(el.nazv)
+        temp.append(0)
         mas_el = [] #массив под статью расходов
 
         #вытаскиваем все записи по этой статье
@@ -196,13 +246,17 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
                 mas_el.append(elem)
 
         #проверяем наличие расходов в этом месяце
-        for i in range(1, len(columns)):
+        for i in range(2, len(columns)):
             tr = 0
             for j in range(len(mas_el)):
                 tp = mas_el[j].mnt + " " + str(mas_el[j].yr)
                 if columns[i] == tp:
                     tr = float(mas_el[j].trt)
-            temp.append(tr)  
+                    summ += tr
+            temp.append(tr)
+
+        temp[1] = summ
+        summ = 0    
         rashod.append(temp)        
         table_gpr.append(temp)
     
@@ -212,12 +266,18 @@ def count_bdr(columns, d_d, d_r, bdr_d, bdr_r):
     pribil[0] = "Прибыль"
     # Проходимся по таблице
     for i in range(len(d_r)):
-        for j in range(1, len(columns)):
+        for j in range(2, len(columns)):
             s_r[j] += rashod[i][j]
+
     # Считаем прибыль
-    for i in range(1, len(columns)):
+    for i in range(2, len(columns)):
         pribil[i] = s_d[i] - s_r[i]
-    
+
+    #Считаем общее значение по месяцам расходов и прибыли
+    for i in range(2, len(s_r)):
+        s_r[1] += s_r[i]
+        pribil[1] += pribil[i]
+
     table_gpr.append(s_r)
     table_gpr.append(pribil)
 
