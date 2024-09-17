@@ -387,6 +387,22 @@ class Sql:
             el = bdr_dh(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
             datas.append(el)
         return datas
+    
+    def take_list_users(self, id_c):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT log_ FROM employe WHERE Id_c = " + str(id_c) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        return data
+    
+    def del_user(self, Id_c, log_):
+        cursor = self.cnxn.cursor()
+        zapros = "DELETE FROM employe WHERE Id_c = " + str(Id_c) + " AND log_='" + log_ + "';"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
             
 sql = Sql()
 
