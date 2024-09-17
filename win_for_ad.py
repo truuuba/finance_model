@@ -55,6 +55,14 @@ class win_for_ad(CTk.CTk):
         self.del_pr = CTk.CTkButton(master=self, text="Удалить", command=self.del_proekt)
         self.del_pr.grid(row=3, column=2, padx=(10, 10), pady=(10, 10))
 
+        self.del_user = CTk.CTkLabel(master=self, text="Удаление пользователя")
+        self.del_user.grid(row=4, column=2, padx=(0,0), pady=(0,0))
+        arr2 = self.make_arr_users()
+        self.users = CTk.CTkComboBox(master=self, values=arr2)
+        self.users.grid(row=5, column=2, padx=(0,0), pady=(0,0))
+        self.del_us = CTk.CTkButton(master=self, text="Удалить", command=self.delete_user)
+        self.del_us.grid(row=6, column=2, padx=(10, 10), pady=(10, 10))
+
     def add_user(self):
         fam = self.fam.get()
         im = self.im.get()
@@ -97,9 +105,29 @@ class win_for_ad(CTk.CTk):
         else:
             arr = ['Проекты отсутствуют']
             return arr
+        
+    def make_arr_users(self):
+        id_comp = sql.found_ind_company(combobox[0].get())
+        arr = sql.take_list_users(id_comp)
+        arr2 = []
+        for nm in arr:
+            n = len(nm)
+            for j in range(n-1, 0, -1):
+                if nm[j] == " ":
+                    nm = nm[:-1]
+                else:
+                    arr2.append(nm)
+                    break
+        return arr2
 
     def del_proekt(self):
         if self.projects.get() == 'Проекты отсутствуют':
             mb.showerror('Ошибка!', 'Проекты не найдены')
+
+    def delete_user(self):
+        log_us = self.users.get()
+        id_comp = sql.found_ind_company(combobox[0].get())
+        sql.del_user(Id_c=id_comp, log_=log_us)
+        mb.showinfo('Успешно!', 'Вы удалили пользователя!')
 
 combobox = []
