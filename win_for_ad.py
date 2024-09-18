@@ -52,7 +52,7 @@ class win_for_ad(CTk.CTk):
         arr = self.make_arr_nazv_pr()
         self.projects = CTk.CTkComboBox(master=self, values=arr)
         self.projects.grid(row=2, column=2, padx=(0, 0), pady=(0, 0))
-        self.del_pr = CTk.CTkButton(master=self, text="Удалить", command=self.del_proekt)
+        self.del_pr = CTk.CTkButton(master=self, text="Удалить", command=self.delete_proekt)
         self.del_pr.grid(row=3, column=2, padx=(10, 10), pady=(10, 10))
 
         self.del_user = CTk.CTkLabel(master=self, text="Удаление пользователя")
@@ -120,9 +120,14 @@ class win_for_ad(CTk.CTk):
                     break
         return arr2
 
-    def del_proekt(self):
+    def delete_proekt(self):
         if self.projects.get() == 'Проекты отсутствуют':
             mb.showerror('Ошибка!', 'Проекты не найдены')
+        else:
+            id_comp = sql.found_ind_company(combobox[0].get())
+            nazv_ = self.projects.get()
+            sql.del_project(id_comp, nazv_)
+            mb.showinfo('Успешно!', 'Вы удалили проект!')
 
     def delete_user(self):
         log_us = self.users.get()
