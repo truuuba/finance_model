@@ -403,7 +403,58 @@ class Sql:
         cursor.execute(zapros)
         self.cnxn.commit()
         cursor.close()
-            
+
+    def del_project(self, Id_c, nazv):
+        cursor = self.cnxn.cursor()
+        #Поиск ID проекта по которому удаляем данные
+        zapros = "SELECT ID FROM project WHERE Id_c = " + str(Id_c) + " AND nazv = '" + nazv + "';"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        id_p = 0
+        for el in data:
+            for e in el:
+                id_p = e
+        #Поиск ID статей по которому удаляем эти статьи
+        zapros = "SELECT ID FROM stati WHERE Id_p = " + str(id_p) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        #Удаление таблиц по ID
+        for id_st in data:
+            #Удаление БДР расходы
+            zapros = "DELETE FROM BDR_r WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление БДР доходы
+            zapros = "DELETE FROM BDR_d WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление ГПР
+            zapros = "DELETE FROM GPR WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление ППО
+            zapros = "DELETE FROM PPO WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+
+        #Удаление самих статей
+        zapros = "DELETE FROM stati WHERE Id_p = " + str(id_p) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        #Удаление проекта
+        zapros = "DELETE FROM project WHERE ID = " + str(id_p) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+        cursor.close()
+
 sql = Sql()
 
 def del_probel(arr, ind):
