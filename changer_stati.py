@@ -1,5 +1,5 @@
-from connect_db import sql
-import customtkinter as CTk
+from tkinter import messagebox as mb
+from changer_gpo_ppo import *
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -18,7 +18,7 @@ class Frame_Dohodov(CTk.CTkFrame):
 
 class Frame_Rashodov(CTk.CTkScrollableFrame):
     def __init__(self, master):
-        super().__init__(master, width=400, height=330)
+        super().__init__(master, width=400, height=500)
 
         self.values = ["Формирование участка", "Проектные работы", "Изыскательные работы", "Технологическое присоединение", "Контроль и технический надзор", "Сдача объекта", "PR, реклама и маркетинговые исследования", "Управленческие расходы", "Страхование ответственности застройщика", "Расходы на содержание непроданных квартир", "Госпошлины за гос.регистрацию сделок с недвижимостью", "Налоги (кроме УСН и НСП)", "Услуги риэлторов", "Вознаграждение за брокеридж (для ТРЦ)", "Субсидирование ипотечной ставки", "Возврат ДС дольщикам", "Социальная инфраструктура", "Услуги банка (билинг)"]
         self.stat_rash_zakazch = CTk.CTkLabel(master=self, text="Статьи расходов заказчика:")
@@ -111,11 +111,12 @@ class Frame_Rashodov(CTk.CTkScrollableFrame):
             rashodi_check.append(checkbox)
 
 class win_change_stati(CTk.CTk):
-    def __init__(self):
+    def __init__(self, id_pr):
         super().__init__() 
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
+        self.id_proekt = id_pr
 
         self.ttle = CTk.CTkLabel(master=self, text="Выберите статьи, которые хотите использовать")
         self.ttle.grid(row=0, column=1, padx=(5,5), pady=(5,5))
@@ -130,8 +131,28 @@ class win_change_stati(CTk.CTk):
         self.check_box_frame2 = Frame_Rashodov(self)
         self.check_box_frame2.grid(row=2, column=0, padx=(30,30), sticky="sew")
 
-        self.but_update = CTk.CTkButton(master=self, text="Обновить данные")
+        self.but_update = CTk.CTkButton(master=self, text="Обновить данные", command=self.update_stati)
         self.but_update.grid(row=3, column=1, padx=(5,5), pady=(5,5))
+
+    def update_stati(self):
+        parametrs_d = [] 
+        parametrs_r = []
+
+        for el in rashodi_check:
+            if el.get():
+                parametrs_r.append(el.cget("text"))
+        for el in dohodi_check:
+            if el.get():
+                parametrs_d.append(el.cget("text"))
+        if (len(parametrs_r) == 0) or (len(parametrs_d) == 0):
+            mb.showerror('Ошибка', 'Не выбраны статьи доходов и расходов')
+        else:
+            result = mb.askyesno(title="Подтверждение изменений", message="При изменении будут удалены все текущие данные проекта, вы хотите продолжить?")
+            if result:
+                self.withdraw() 
+                e = win_change_gpo_ppo(id_pr=self.id_proekt, arr_d=parametrs_d, arr_r=parametrs_r)
+                e.mainloop()
+            
 
 
 
