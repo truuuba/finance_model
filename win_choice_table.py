@@ -11,18 +11,18 @@ class win_choice_table(CTk.CTk):
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
         self.protocol('WM_DELETE_WINDOW', self._done)
-        id_pr = arr[0]
+        self.id_pr = arr[0]
 
         #ГПР
         self.gpr = CTk.CTkLabel(master=self, text="Таблица графика производственных работ")
         self.gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=create_tabel_gpr(id_pr))
+        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=create_tabel_gpr(self.id_pr))
         self.gpr_ex.grid(row=1, column=0, padx=(5,5), pady=(5,5))
 
         #ППО
         self.ppo = CTk.CTkLabel(master=self, text="Таблица ППО")
         self.ppo.grid(row=2, column=0, padx=(5,5), pady=(5,5))
-        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=create_tabel_ppo(id_pr))
+        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=create_tabel_ppo(self.id_pr))
         self.ppo_ex.grid(row=3, column=0, padx=(5,5), pady=(5,5))
 
         #БДР
@@ -40,7 +40,7 @@ class win_choice_table(CTk.CTk):
         #Изменения в конкретных таблицах
         self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в талицу")
         self.changer.grid(row=8, column=0, padx=(5,5), pady=(15,5))
-        self.cnanger_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДР", "БДДС"])
+        self.cnanger_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДДС"])
         self.cnanger_check_box.grid(row=9, column=0, padx=(5,5), pady=(5,5))
         self.changer_but = CTk.CTkButton(master=self, text="Изменить")
         self.changer_but.grid(row=10, column=0, padx=(5,5), pady=(5,5))
@@ -70,5 +70,7 @@ class win_choice_table(CTk.CTk):
         d.mainloop()    
 
     def open_win_changer_stati(self):
-        c = win_change_stati()
+        c = win_change_stati(id_pr=self.id_pr)
         c.mainloop()
+
+
