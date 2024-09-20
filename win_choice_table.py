@@ -1,8 +1,8 @@
-import customtkinter as CTk
 from make_gpr_exe import *
 from make_ppo_exe import *
 from win_bdr import *
 from changer_stati import *
+from changer_gpo import *
 
 class win_choice_table(CTk.CTk):
     def __init__(self):
@@ -40,9 +40,9 @@ class win_choice_table(CTk.CTk):
         #Изменения в конкретных таблицах
         self.changer = CTk.CTkLabel(master=self, text="Добавить изменения в талицу")
         self.changer.grid(row=8, column=0, padx=(5,5), pady=(15,5))
-        self.cnanger_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДДС"])
-        self.cnanger_check_box.grid(row=9, column=0, padx=(5,5), pady=(5,5))
-        self.changer_but = CTk.CTkButton(master=self, text="Изменить")
+        self.changer_check_box = CTk.CTkComboBox(master=self, values=["ГПР", "ППО", "БДДС"])
+        self.changer_check_box.grid(row=9, column=0, padx=(5,5), pady=(5,5))
+        self.changer_but = CTk.CTkButton(master=self, text="Изменить", command=self.win_change_table)
         self.changer_but.grid(row=10, column=0, padx=(5,5), pady=(5,5))
 
         #Изменения в статьях
@@ -72,5 +72,13 @@ class win_choice_table(CTk.CTk):
     def open_win_changer_stati(self):
         c = win_change_stati(id_pr=self.id_pr)
         c.mainloop()
+
+    def win_change_table(self):
+        nazv_t = self.changer_check_box.get()
+        if nazv_t == 'ГПР':
+            a = win_change_gpo()
+            a.mainloop()
+        elif nazv_t == 'ППО':
+            ...
 
 
