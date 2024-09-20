@@ -97,6 +97,11 @@ class win_for_ad(CTk.CTk):
             if prov:
                 sql.input_empl(id_comp, fam, im, otch, log, pas)
                 mb.showinfo('Успешно!', 'Вы добавили пользователя в систему!')
+                self.fam.delete(first_index=0, last_index=len(fam))
+                self.im.delete(first_index=0, last_index=len(im))
+                self.otch.delete(first_index=0, last_index=len(otch))
+                self.log.delete(first_index=0, last_index=len(log))
+                self.pas.delete(first_index=0, last_index=len(pas))
 
     def make_arr_nazv_pr(self):
         arr = sql.take_project(combobox[0].get())
@@ -124,15 +129,19 @@ class win_for_ad(CTk.CTk):
         if self.projects.get() == 'Проекты отсутствуют':
             mb.showerror('Ошибка!', 'Проекты не найдены')
         else:
-            id_comp = sql.found_ind_company(combobox[0].get())
-            nazv_ = self.projects.get()
-            sql.del_project(id_comp, nazv_)
-            mb.showinfo('Успешно!', 'Вы удалили проект!')
+            result = mb.askyesno(title="Подтверждение изменений", message="Вы действительно хотите безвозвратно удалить проект?")
+            if result:
+                id_comp = sql.found_ind_company(combobox[0].get())
+                nazv_ = self.projects.get()
+                sql.del_project(id_comp, nazv_)
+                mb.showinfo('Успешно!', 'Вы удалили проект!')
 
     def delete_user(self):
-        log_us = self.users.get()
-        id_comp = sql.found_ind_company(combobox[0].get())
-        sql.del_user(Id_c=id_comp, log_=log_us)
-        mb.showinfo('Успешно!', 'Вы удалили пользователя!')
+        result = mb.askyesno(title="Подтверждение изменений", message="Вы действительно хотите безвозвратно удалить пользователя?")
+        if result:
+            log_us = self.users.get()
+            id_comp = sql.found_ind_company(combobox[0].get())
+            sql.del_user(Id_c=id_comp, log_=log_us)
+            mb.showinfo('Успешно!', 'Вы удалили пользователя!')
 
 combobox = []
