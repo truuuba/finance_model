@@ -455,6 +455,42 @@ class Sql:
         self.cnxn.commit()
         cursor.close()
 
+    def delete_stati(self, id_p):
+        cursor = self.cnxn.cursor()
+        #Поиск ID статей по которому удаляем эти статьи
+        zapros = "SELECT ID FROM stati WHERE Id_p = " + str(id_p) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = make_arr_list(cursor.fetchall())
+        #Удаление таблиц по ID
+        for id_st in data:
+            #Удаление БДР расходы
+            zapros = "DELETE FROM BDR_r WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление БДР доходы
+            zapros = "DELETE FROM BDR_d WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление ГПР
+            zapros = "DELETE FROM GPR WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+            #Удаление ППО
+            zapros = "DELETE FROM PPO WHERE Id_st = " + str(id_st) + ";"
+            print(zapros)
+            cursor.execute(zapros)
+            self.cnxn.commit()
+
+        #Удаление самих статей
+        zapros = "DELETE FROM stati WHERE Id_p = " + str(id_p) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+
 sql = Sql()
 
 def del_probel(arr, ind):
@@ -483,3 +519,4 @@ def make_arr_matrix(arr):
             a.append(arr[i][j])
         arr_normal.append(a)
     return arr_normal
+
