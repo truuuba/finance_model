@@ -1,4 +1,3 @@
-from tkinter import messagebox as mb
 from changer_gpo_ppo import *
 
 CTk.set_appearance_mode("dark")
@@ -152,6 +151,7 @@ class win_change_stati(CTk.CTk):
                 self.withdraw() 
                 e = win_change_gpo_ppo(id_pr=self.id_proekt, arr_d=parametrs_d, arr_r=parametrs_r)
                 e.mainloop()
+            
             
 
 
