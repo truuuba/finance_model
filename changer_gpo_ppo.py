@@ -1,5 +1,9 @@
 from connect_db import sql
 import customtkinter as CTk
+from tkinter import messagebox as mb
+import re
+import sys
+import os
 
 CTk.set_appearance_mode("dark")
 CTk.set_default_color_theme("green")
@@ -37,7 +41,7 @@ class Dohod_PPO(CTk.CTkScrollableFrame):
         super().__init__(master, width=250, height=500)
         cnt = 0
         for i in range(len(arr)):
-            self.zagolovok = CTk.CTkLabel(master=self, text=arr[i])
+            self.zagolovok = CTk.CTkLabel(master=self, text=arr[i], fg_color="#3A5A40")
             self.zagolovok.grid(row=cnt, column=0, padx=(5,5), pady=(5,5))
             cnt += 1
             self.price = CTk.CTkLabel(master=self, text="Цена за квадратный метр, в рублях")
@@ -68,6 +72,9 @@ class win_change_gpo_ppo(CTk.CTk):
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
         self.resizable(True, True)
+        self.id_proekt = id_pr
+        self.params_r = arr_r
+        self.params_d = arr_d
 
         #Для ГПР
         self.ttle_gpr = CTk.CTkLabel(master=self, text="Данные для ГПР")
@@ -81,5 +88,80 @@ class win_change_gpo_ppo(CTk.CTk):
         self.win_ppo = Dohod_PPO(master=self, arr=arr_d)
         self.win_ppo.grid(row=2, column=2, padx=(5,5), pady=(5,5))
 
-        self.btn_ready = CTk.CTkButton(master=self, text="Применить изменения для таблиц")
+        self.btn_ready = CTk.CTkButton(master=self, text="Применить изменения для таблиц", command=self.change_tables)
         self.btn_ready.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+
+    def change_tables(self):
+        #Проверка вводимых данных ГПР
+        zavisim = []
+        prod = []
+        prov_GPR = True #Проверка на ввод данных 
+        prov_PPO = True
+        for i in range(len(self.params_r)):
+            #Проверка данных для зависимостей процессов
+            match_zav = re.match(r'^[\d\s]*$', entr_zavis[i].get())
+            if not(match_zav):
+                prov_GPR = False
+                mb.showerror('Ошибка!', 'Были неверно записаны зависимости')
+                break
+            elif entr_zavis[i].get() != "":
+                zavisim.append(entr_zavis[i].get())
+            else:
+                zavisim.append("0")
+            
+            #Проверка данных для продолжительности процессов
+            match_prod = re.match(r'^\d+$', entr_prod[i].get())
+            if not(match_prod):
+                prov_GPR = False
+                mb.showerror('Ошибка!', 'Были неверно записаны продолжительности процессов')
+                break
+            else:
+                prod.append(entr_prod[i].get())
+
+        #Проверка вводимых данных в ППО
+        if prov_GPR:
+            for i in range(len(self.params_d)):
+                match_price = re.match(r'^[0-9]+$', entry_price[i].get())
+                match_ploshad = re.match(r'^[0-9]+$', entry_ploshad[i].get())
+                match_kv = re.match(r'^[0-9]+$', entry_kv[i].get())
+                if not (match_price):
+                    mb.showerror('Ошибка!', 'Неверно записана стоимость за квадратный метр')
+                    prov_PPO = False
+                    break
+                elif not (match_ploshad):
+                    mb.showerror('Ошибка!', 'Неверно записана продаваемая площадь')
+                    prov_PPO = False
+                    break
+                elif not (match_kv):
+                    mb.showerror('Ошибка!', 'Неверно записано количество квартир/помещений')
+                    prov_PPO = False
+                    break
+        
+        #Изменение данных
+        if prov_GPR and prov_PPO:
+            #Удаление текущих данных
+            sql.delete_stati(id_p=self.id_proekt)
+
+            #Добавление новых статей доходов
+            for i in range(len(self.params_d)):
+                sql.input_stati(id_pr=self.id_proekt, nazv=self.params_d[i], param="Доходы")
+            #Добавление новых статей расходов
+            for i in range(len(self.params_r)):
+                sql.input_stati(id_pr=self.id_proekt, nazv=self.params_r[i], param="Расходы")
+            
+            #Вытаскиваем данные по статьям
+            params_r = sql.take_stat(id_pr=self.id_proekt, param="Расходы")
+            params_d = sql.take_stat(id_pr=self.id_proekt, param="Доходы")
+
+            #Ввод данных в ГПР и ППО
+            for i, el in enumerate(params_r):
+                sql.input_gpr(id_st=el.id_, prod=prod[i], zav=zavisim[i])
+            for i, el in enumerate(params_d):
+                sql.input_ppo(el.id_, entry_ploshad[i].get(), entry_price[i].get(), entry_kv[i].get())
+
+            mb.showinfo('Отлично!', 'Вы успешно обновили данные, для дальнешей работы запустите приложение заново')
+            self.destroy()
+            os.system('main.py')
+            sys.exit(0)
+        
+
