@@ -3,6 +3,8 @@ from make_ppo_exe import *
 from win_bdr import *
 from changer_stati import *
 from changer_gpo import *
+from changer_ppo import *
+from win_change_time import *
 
 class win_choice_table(CTk.CTk):
     def __init__(self):
@@ -54,7 +56,7 @@ class win_choice_table(CTk.CTk):
         #Изменить даты начала работ
         self.time_work = CTk.CTkLabel(master=self, text="Изменить даты продаж и строительства")
         self.time_work.grid(row=13, column=0, padx=(5,5), pady=(5,5))
-        self.ch_t = CTk.CTkButton(master=self, text="Изменить")
+        self.ch_t = CTk.CTkButton(master=self, text="Изменить", command=self.win_change_time)
         self.ch_t.grid(row=14, column=0, padx=(5,5), pady=(5,5))
 
         self.poyasn_t = CTk.CTkLabel(master=self, text="При изменении файла закрывайте его в Excel!", text_color='#EB5E28')
@@ -76,9 +78,14 @@ class win_choice_table(CTk.CTk):
     def win_change_table(self):
         nazv_t = self.changer_check_box.get()
         if nazv_t == 'ГПР':
-            a = win_change_gpo()
+            a = win_change_gpo(self.id_pr)
             a.mainloop()
         elif nazv_t == 'ППО':
-            ...
+            a = win_change_ppo(self.id_pr)
+            a.mainloop()
+
+    def win_change_time(self):
+        a = win_change_time(self.id_pr)
+        a.mainloop()
 
 
