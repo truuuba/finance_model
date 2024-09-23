@@ -34,6 +34,19 @@ class bdr_dh:
         self.yr = yr
         self.doh = doh
 
+class ppo:
+    def __init__(self, id_, prod, st, kv):
+        self.id_ = id_
+        self.prod = prod
+        self.st = st
+        self.kv = kv
+
+class gpr:
+    def __init__(self, id_, prod, zav):
+        self.id_ = id_
+        self.prod = prod
+        self.zav = zav
+
 class Sql:
     def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
@@ -490,6 +503,45 @@ class Sql:
         print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
+
+    def update_ppo(self, id_, id_st, prod, st, kv):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE FROM PPO SET Id_st = " + str(id_st) + ", Prod_pl = "+ str(prod) + ", Stoim = " + str(st) + ", Kv_cnt = " + str(kv) + " WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+    
+    def take_ppo(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Prod_pl, Stoim, Kv_cnt FROM PPO WHERE Id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = ppo(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            datas.append(el)
+        return datas
+    
+    def take_gpr(self, id_st):
+        cursor = self.cnxn.cursor()
+        zapros = "SELECT ID, Prodolj, Zavisim FROM GPR WHERE Id_st = " + str(id_st) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        data = cursor.fetchall()
+        datas = []
+        for i in range(len(data)):
+            el = gpr(data[i][0], data[i][1], data[i][2], data[i][3])
+            datas.append(el)
+        return datas
+
+    def update_time(self, id_, m_w, yr_w, m_pr, y_pr):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE FROM project SET mount_w = " + m_w + ", yr_w = " + str(yr_w) + ", mount_pr = " + m_pr + ", yr_pr = " + str(y_pr) + " WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
+
 
 sql = Sql()
 
