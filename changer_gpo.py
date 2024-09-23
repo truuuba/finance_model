@@ -13,7 +13,7 @@ entr_zavis = []
 
 class Work_GPR(CTk.CTkScrollableFrame):
     def __init__(self, master, p_r):
-        super().__init__(master, width=800, height=500)
+        super().__init__(master, width=1000, height=500)
         self.w = CTk.CTkLabel(master=self, text="Параметры работ")
         self.w.grid(row=0, column=0, padx=(5,5), pady=(5,5))
         self.pr = CTk.CTkLabel(master=self, text="Продолжительность работ в месяцах")
@@ -23,7 +23,7 @@ class Work_GPR(CTk.CTkScrollableFrame):
         
         n = len(p_r)
         for i in range(n):
-            self.work = CTk.CTkLabel(master=self, text=str(i+1)+". "+p_r[i])
+            self.work = CTk.CTkLabel(master=self, text=str(i+1)+". "+p_r[i].nazv)
             self.work.grid(row=i+1, column=0, padx=(5,5), pady=(5,5))
             self.prodolj = CTk.CTkEntry(master=self)
             self.prodolj.grid(row=i+1, column=1, padx=(5,5), pady=(5,5))
@@ -33,7 +33,7 @@ class Work_GPR(CTk.CTkScrollableFrame):
             entr_zavis.append(self.zavis)
 
 class win_change_gpo(CTk.CTk):
-    def __init__(self):
+    def __init__(self, id_proekt):
         super().__init__() 
         self.geometry("1200x700")
         self.title("ФМ Калькулятор")
@@ -42,10 +42,10 @@ class win_change_gpo(CTk.CTk):
         self.ttle = CTk.CTkLabel(master=self, text="Вставьте новые данные для данных ГПР")
         self.ttle.grid(row=0, column=0, padx=(5,5), pady=(5,5))
 
-        self.params_r = sql.take_stat(id_pr=self.id_proekt, param="Расходы")
+        self.params_r = sql.take_stat(id_pr=id_proekt, param="Расходы")
         self.win_gpo = Work_GPR(self, p_r=self.params_r)
         self.win_gpo.grid(row=1, column=0, padx=(5,5), pady=(5,5))
-        self.btn_upd = CTk.CTkButton(master=self, text="Применить изменения")
+        self.btn_upd = CTk.CTkButton(master=self, text="Применить изменения", command=self.update_gpr)
         self.btn_upd.grid(row=2, column=0, padx=(5,5), pady=(5,5))
 
     def update_gpr(self):
@@ -75,9 +75,17 @@ class win_change_gpo(CTk.CTk):
                 prod.append(entr_prod[i].get())
         
         if prov_GPR:
-            for i, el in enumerate(self.params_r):
+            temp = []
+            for i in range(len(self.params_r)):
+                a = sql.take_gpr(self.params_r[i].id_)
+                temp.append(a)
+
+            for i, el in enumerate(temp):
                 sql.input_gpr(id_st=el.id_, prod=prod[i], zav=zavisim[i])
-            mb.showinfo('Отлично!', 'Вы успешно обновили данные, для дальнешей работы запустите приложение заново')
-            self.destroy()
-            os.system('main.py')
-            sys.exit(0)
+            
+            result = mb.askyesno(title="Подтверждение изменений", message="При изменении будут удалены текущие данные ГПР, вы хотите продолжить?")
+            if result:
+                mb.showinfo('Отлично!', 'Вы успешно обновили данные, для дальнешей работы запустите приложение заново')
+                self.destroy()
+                os.system('main.py')
+                sys.exit(0)
