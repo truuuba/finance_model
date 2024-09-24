@@ -4,7 +4,7 @@ from connect_db import sql
 from transliterate import translit
 import math
 
-def create_tabel_ppo(id_pr):
+def create_tabel_ppo(id_pr, prov_create):
     #Берем данные по названию проекта
     n_t = sql.take_nazv(id_pr)
     n_t = del_probel_nazv(n_t)
@@ -28,7 +28,8 @@ def create_tabel_ppo(id_pr):
         #Считаем ППО по каждой статье расходов
         t_ppo.append(cout_ppo(ploshad_kv_m, st_kv_m, prod, m, cnt_kvartir, dannie, year, i))
 
-    filepath = create_empty_excel(columns=make_first_list(m, prod), filename=('ppo_' + name_table + '.xlsx'), data=t_ppo, sheet_name = sht_name)
+    if prov_create:
+        filepath = create_empty_excel(columns=make_first_list(m, prod), filename=('ppo_' + name_table + '.xlsx'), data=t_ppo, sheet_name = sht_name)
 
 #Меняем месяца
 def change_mounth(mounth):
