@@ -18,14 +18,16 @@ class win_choice_table(CTk.CTk):
         #ГПР
         self.gpr = CTk.CTkLabel(master=self, text="Таблица графика производственных работ")
         self.gpr.grid(row=0, column=0, padx=(5,5), pady=(5,5))
-        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=create_tabel_gpr(self.id_pr))
+        self.gpr_ex = CTk.CTkButton(master=self, text="Создать таблицу ГПР в Excel", command=self.tabel_gpr)
         self.gpr_ex.grid(row=1, column=0, padx=(5,5), pady=(5,5))
+        create_tabel_gpr(self.id_pr, False)
 
         #ППО
         self.ppo = CTk.CTkLabel(master=self, text="Таблица ППО")
         self.ppo.grid(row=2, column=0, padx=(5,5), pady=(5,5))
-        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=create_tabel_ppo(self.id_pr))
+        self.ppo_ex = CTk.CTkButton(master=self, text="Создать таблицу ППО в Excel", command=self.tabel_ppo)
         self.ppo_ex.grid(row=3, column=0, padx=(5,5), pady=(5,5))
+        create_tabel_ppo(self.id_pr, False)
 
         #БДР
         self.bdr = CTk.CTkLabel(master=self, text="Таблица БДР")
@@ -87,5 +89,13 @@ class win_choice_table(CTk.CTk):
     def win_change_time(self):
         a = win_change_time(self.id_pr)
         a.mainloop()
+    
+    def tabel_gpr(self):
+        create_tabel_gpr(self.id_pr, True)
+        mb.showinfo('Отлично!', 'Вы успешно создали таблицу')
+    
+    def tabel_ppo(self):
+        create_tabel_ppo(self.id_pr, True)
+        mb.showinfo('Отлично!', 'Вы успешно создали таблицу')
 
 
