@@ -506,7 +506,7 @@ class Sql:
 
     def update_ppo(self, id_, id_st, prod, st, kv):
         cursor = self.cnxn.cursor()
-        zapros = "UPDATE FROM PPO SET Id_st = " + str(id_st) + ", Prod_pl = "+ str(prod) + ", Stoim = " + str(st) + ", Kv_cnt = " + str(kv) + " WHERE ID = " + str(id_) + ";"
+        zapros = "UPDATE PPO SET Id_st = " + str(id_st) + ", Prod_pl = "+ str(prod) + ", Stoim = " + str(st) + ", Kv_cnt = " + str(kv) + " WHERE ID = " + str(id_) + ";"
         print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
@@ -519,7 +519,7 @@ class Sql:
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
-            el = ppo(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4])
+            el = ppo(data[i][0], data[i][1], data[i][2], data[i][3])
             datas.append(el)
         return datas
     
@@ -531,17 +531,23 @@ class Sql:
         data = cursor.fetchall()
         datas = []
         for i in range(len(data)):
-            el = gpr(data[i][0], data[i][1], data[i][2], data[i][3])
+            el = gpr(data[i][0], data[i][1], data[i][2])
             datas.append(el)
         return datas
 
     def update_time(self, id_, m_w, yr_w, m_pr, y_pr):
         cursor = self.cnxn.cursor()
-        zapros = "UPDATE FROM project SET mount_w = " + m_w + ", yr_w = " + str(yr_w) + ", mount_pr = " + m_pr + ", yr_pr = " + str(y_pr) + " WHERE ID = " + str(id_) + ";"
+        zapros = "UPDATE project SET mount_w = '" + m_w + "', yr_w = " + str(yr_w) + ", mount_pr = '" + m_pr + "', yr_pr = " + str(y_pr) + " WHERE ID = " + str(id_) + ";"
         print(zapros)
         cursor.execute(zapros)
         self.cnxn.commit()
 
+    def update_gpr(self, id_, id_st, prod, zav):
+        cursor = self.cnxn.cursor()
+        zapros = "UPDATE GPR SET Id_st = " + str(id_st) + ", Prodolj = "+ str(prod) + ", Zavisim = '" + zav + "' WHERE ID = " + str(id_) + ";"
+        print(zapros)
+        cursor.execute(zapros)
+        self.cnxn.commit()
 
 sql = Sql()
 
