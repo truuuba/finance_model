@@ -86,7 +86,7 @@ class win_change_ppo(CTk.CTk):
 
         if prov:
             for i in range(len(self.params_d)):
-                sql.update_ppo(self.params_d[i].id_, entry_ploshad[i].get(), entry_price[i].get(), entry_kv[i].get())
+                sql.update_ppo(id_=self.params_d[i].id_, prod=entry_ploshad[i].get(), st=entry_price[i].get(), kv=entry_kv[i].get(), id_st=self.params_st[i].id_)
 
             result = mb.askyesno(title="Подтверждение изменений", message="При изменении будут удалены текущие данные ППО, вы хотите продолжить?")
             if result:
