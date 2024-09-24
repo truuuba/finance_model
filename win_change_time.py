@@ -40,7 +40,7 @@ class win_change_time(CTk.CTk):
         self.y_w.grid(row=4, column=2, padx=(5,5), pady=(5,5))
 
         self.btn_upd = CTk.CTkButton(master=self, text="Изменить", command=self.change_time)
-        self.btn_upd.grid(row=5, column=0, padx=(5,5), pady=(5,5))
+        self.btn_upd.grid(row=5, column=1, padx=(5,5), pady=(5,5))
     
     def change_time(self):
         mounth_w = self.mount.get()
