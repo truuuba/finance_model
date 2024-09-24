@@ -15,7 +15,7 @@ critical = []
 dlitel = 0
 datas = data_gpo(gpo=gpo, critic=critical, dlit=dlitel)
 
-def create_tabel_gpr(id_pr):    
+def create_tabel_gpr(id_pr, prov_create):    
     #Сначала по таблице Статы через айди проекта вытащить статьи расходов - в name_rash записываем названия и в другой массив фиксируем айдишники
     #Далее по таблице ГПР проходимся через айдишники статей и вытаскиваем зависимости и продолжительность
     dannie = sql.take_stat(id_pr=id_pr, param="Расходы")
@@ -77,7 +77,8 @@ def create_tabel_gpr(id_pr):
     #Добавляем продолжительность в базу
     sql.input_prod_project(id_pr=id_pr, prod=datas.dlit)
 
-    filepath = create_empty_excel(columns=make_first_list(mounth, datas.dlit, year),
+    if prov_create:
+        filepath = create_empty_excel(columns=make_first_list(mounth, datas.dlit, year),
                                   filename=('gpr_' + name_table + '.xlsx'))
 
 #Меняем месяца
