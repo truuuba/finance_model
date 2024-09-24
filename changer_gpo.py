@@ -78,10 +78,11 @@ class win_change_gpo(CTk.CTk):
             temp = []
             for i in range(len(self.params_r)):
                 a = sql.take_gpr(self.params_r[i].id_)
-                temp.append(a)
+                for el in a:
+                    temp.append(el)
 
-            for i, el in enumerate(temp):
-                sql.input_gpr(id_st=el.id_, prod=prod[i], zav=zavisim[i])
+            for i in range(len(temp)):
+                sql.update_gpr(id_st=self.params_r[i].id_, prod=prod[i], zav=zavisim[i], id_=temp[i].id_)
             
             result = mb.askyesno(title="Подтверждение изменений", message="При изменении будут удалены текущие данные ГПР, вы хотите продолжить?")
             if result:
