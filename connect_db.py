@@ -48,7 +48,7 @@ class gpr:
         self.zav = zav
 
 class Sql:
-    def __init__(self, database="FM_model", server=r"NODE2\DBLMSSQLSRV", username="connect_FM_model", password=r"9*%dA6lU&T6)p2PX", driver="ODBC Driver 17 for SQL Server"):
+    def __init__(self, database="", server=r"", username="", password=r"", driver="ODBC Driver 17 for SQL Server"):
         connectionString = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
         #return pyodbc.connect(connectionString)
         self.cnxn = pyodbc.connect(connectionString)
